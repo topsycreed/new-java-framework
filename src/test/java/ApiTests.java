@@ -4,6 +4,10 @@ import models.AddUserResponse;
 import models.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -83,8 +87,24 @@ class ApiTests {
     }
 
     @Test
-    void createUserControllerTest2() {
+    void createInvalidUserControllerTest() {
         Response response = userController.createUser(INVALID_USER);
+        AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
+
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(200, createdUserResponse.getCode());
+        Assertions.assertEquals("unknown", createdUserResponse.getType());
+        Assertions.assertEquals("0", createdUserResponse.getMessage());
+    }
+
+    static Stream<User> users() {
+        return Stream.of(DEFAULT_USER, INVALID_USER);
+    }
+
+    @ParameterizedTest
+    @MethodSource("users")
+    void createUserParametrizedTest(User user) {
+        Response response = userController.createUser(user);
         AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
 
         Assertions.assertEquals(200, response.statusCode());
