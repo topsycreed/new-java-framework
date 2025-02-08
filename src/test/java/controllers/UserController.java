@@ -4,12 +4,12 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import models.User;
 
+import static constants.CommonConstants.BASE_URI;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 
 public class UserController {
     RequestSpecification requestSpecification;
-    private static final String BASE_URI = "https://petstore.swagger.io/v2/";
     private static final String USER_ENDPOINT = "user";
 
     public UserController() {

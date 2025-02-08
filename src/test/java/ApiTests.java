@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static testdata.TestData.DEFAULT_USER;
+import static testdata.TestData.INVALID_USER;
 
 class ApiTests {
     UserController userController = new UserController();
@@ -71,24 +73,18 @@ class ApiTests {
 
     @Test
     void createUserControllerTest() {
-        User user = new User(0,
-                "username",
-                "firstName",
-                "lastName",
-                "email",
-                "password",
-                "phone",
-                0);
-        User userBuilder = User.builder()
-                .username("username")
-                .firstName("firstName")
-                .lastName("lastName")
-                .email("email")
-                .phone("password")
-                .userStatus(0)
-                .build();
+        Response response = userController.createUser(DEFAULT_USER);
+        AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
 
-        Response response = userController.createUser(user);
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(200, createdUserResponse.getCode());
+        Assertions.assertEquals("unknown", createdUserResponse.getType());
+        Assertions.assertFalse(createdUserResponse.getMessage().isEmpty());
+    }
+
+    @Test
+    void createUserControllerTest2() {
+        Response response = userController.createUser(INVALID_USER);
         AddUserResponse createdUserResponse = response.as(AddUserResponse.class);
 
         Assertions.assertEquals(200, response.statusCode());
