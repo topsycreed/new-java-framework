@@ -1,3 +1,5 @@
+package tests;
+
 import controllers.UserController;
 import io.restassured.response.Response;
 import models.AddUserResponse;
