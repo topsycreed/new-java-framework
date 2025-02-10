@@ -18,6 +18,13 @@ jobs:
       contents: write
       pages: write
 
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        options: --shm-size 2g
+        ports:
+          - 4444:4444
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -35,7 +42,9 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew test
+      env:
+        SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
+      run: ./gradlew clean test
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
