@@ -17,7 +17,7 @@ import java.util.Map;
 
 @ExtendWith(AfterTestExtension.class)
 public class BaseTest {
-    WebDriver driver;
+    static WebDriver driver;
     WebDriverWait longWait;
 
     public static WebDriver getDriver() {
