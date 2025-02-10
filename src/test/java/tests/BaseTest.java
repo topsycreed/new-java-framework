@@ -2,20 +2,27 @@ package tests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.AfterTestExtension;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Map;
 
+@ExtendWith(AfterTestExtension.class)
 public class BaseTest {
     WebDriver driver;
     WebDriverWait longWait;
+
+    public static WebDriver getDriver() {
+        return driver;
+    }
 
     @BeforeEach
     void setup() {

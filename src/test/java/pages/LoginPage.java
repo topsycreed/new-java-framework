@@ -1,6 +1,7 @@
 package pages;
 
 import config.TestPropertiesConfig;
+import io.qameta.allure.Step;
 import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,6 +26,7 @@ public class LoginPage extends BasePage {
         driver.get(configProperties.getUiBaseUrl() + "login-form.html");
     }
 
+    @Step("Login with valid user and password")
     public void login() {
         usernameInput.sendKeys(VALID_USER);
         passwordInput.sendKeys(VALID_PASSWORD);
