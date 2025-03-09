@@ -1,16 +1,18 @@
 package pages;
 
+import com.google.inject.Inject;
+import config.TestPropertiesConfig;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BasePage {
-    protected WebDriver driver;
-    protected WebDriverWait wait;
+    protected final WebDriver driver;
+    protected final TestPropertiesConfig configProperties;
 
-    public BasePage(WebDriver driver, WebDriverWait wait) {
+    @Inject
+    public BasePage(WebDriver driver, TestPropertiesConfig configProperties) {
         this.driver = driver;
-        this.wait = wait;
+        this.configProperties = configProperties;
         PageFactory.initElements(driver, this);
     }
 }
