@@ -6,7 +6,6 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import models.User;
 import org.aeonbits.owner.ConfigFactory;
-import org.checkerframework.checker.units.qual.A;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;

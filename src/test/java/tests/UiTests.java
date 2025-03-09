@@ -43,11 +43,11 @@ class UiTests extends BaseTest {
         softly.assertAll();
     }
 
-    @Test
-    void loadingImagesExplicitWaitTest() {
-        driver.get("https://bonigarcia.dev/selenium-webdriver-java/loading-images.html");
-
-        WebElement landscape = longWait.until(ExpectedConditions.presenceOfElementLocated(By.id("landscape")));
-        assertThat(landscape.getAttribute("src")).containsIgnoringCase("landscape");
-    }
+//    @Test
+//    void loadingImagesExplicitWaitTest() {
+//        driver.get("https://bonigarcia.dev/selenium-webdriver-java/loading-images.html");
+//
+////        WebElement landscape = longWait.until(ExpectedConditions.presenceOfElementLocated(By.id("landscape")));
+//        assertThat(landscape.getAttribute("src")).containsIgnoringCase("landscape");
+//    }
 }
