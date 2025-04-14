@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.aeonbits.owner:owner:1.0.12'
     testImplementation "io.qameta.allure:allure-junit5:${allureVersion}"
     implementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
+    implementation 'com.google.inject:guice:7.0.0'
 }
 
 test {
