@@ -1,5 +1,6 @@
 package tests;
 
+import io.qameta.allure.Allure;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,7 @@ public class BaseTest {
 
     private WebDriver initDriver() {
         String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
+        Allure.addAttachment("RemoteUrl", remoteUrl);
         if (remoteUrl != null) {
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");  // Add headless mode
