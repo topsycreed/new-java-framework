@@ -1,6 +1,8 @@
 package tests;
 
+import config.TestPropertiesConfig;
 import io.qameta.allure.Allure;
+import org.aeonbits.owner.ConfigFactory;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +22,7 @@ import java.util.UUID;
 
 @ExtendWith(AfterTestExtension.class)
 public class BaseTest {
+    TestPropertiesConfig configProperties = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
     static WebDriver driver;
     WebDriverWait longWait;
 
@@ -41,6 +44,9 @@ public class BaseTest {
 
     private WebDriver initDriver() {
         String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
+        if (remoteUrl == null || remoteUrl.isEmpty()) {
+            remoteUrl = configProperties.getSeleniumRemoteUrl();
+        }
         if (remoteUrl != null) {
             Allure.addAttachment("RemoteUrl", remoteUrl);
             ChromeOptions options = new ChromeOptions();
