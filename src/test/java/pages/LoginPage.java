@@ -18,9 +18,6 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//button[@type='submit']")
     private WebElement loginButton;
 
-    private static final String VALID_USER = "user";
-    private static final String VALID_PASSWORD = "user";
-
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
         driver.get(configProperties.getUiBaseUrl() + "login-form.html");
@@ -28,8 +25,8 @@ public class LoginPage extends BasePage {
 
     @Step("Login with valid user and password")
     public void login() {
-        usernameInput.sendKeys(VALID_USER);
-        passwordInput.sendKeys(VALID_PASSWORD);
+        usernameInput.sendKeys(configProperties.getLogin());
+        passwordInput.sendKeys(configProperties.getPassword());
         loginButton.click();
     }
 }
