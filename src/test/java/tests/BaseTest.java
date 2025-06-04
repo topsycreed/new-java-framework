@@ -41,8 +41,8 @@ public class BaseTest {
 
     private WebDriver initDriver() {
         String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
-        Allure.addAttachment("RemoteUrl", remoteUrl);
         if (remoteUrl != null) {
+            Allure.addAttachment("RemoteUrl", remoteUrl);
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");  // Add headless mode
             options.addArguments("--disable-gpu"); // Switch off GPU, because we don't need it in headless mode
@@ -55,6 +55,7 @@ public class BaseTest {
                 throw new RuntimeException("Malformed URL for Selenium Remote WebDriver", e);
             }
         } else {
+            Allure.addAttachment("Local run", "No remote driver");
             driver = new ChromeDriver();
         }
         driver.manage().window().maximize();
