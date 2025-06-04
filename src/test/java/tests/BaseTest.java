@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Map;
+import java.util.UUID;
 
 @ExtendWith(AfterTestExtension.class)
 public class BaseTest {
@@ -51,7 +52,11 @@ public class BaseTest {
                 throw new RuntimeException("Malformed URL for Selenium Remote WebDriver", e);
             }
         } else {
-            driver = new ChromeDriver();
+            //fix for Jenkins
+            String profileDir = "/tmp/chrome-profile-" + UUID.randomUUID();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--user-data-dir=" + profileDir);
+            driver = new ChromeDriver(options);
         }
         driver.manage().window().maximize();
         return driver;
