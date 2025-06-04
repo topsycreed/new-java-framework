@@ -127,6 +127,25 @@ Post-build Actions
 
 Используй заданный параметр в тестах, например: -Denv=$env
 
+🔐 Секретные переменные
+
+* В настройках проекта → включи:
+
+☑ Use secret text(s) or file(s)
+
+* Добавь Binding:
+
+Secret text:
+
+Variable: SECRET_VARIABLE
+
+Credentials ID: secret-variable
+
+* Используй в Gradle-таске
+```bash
+clean test -Dvar=$SECRET_VARIABLE
+```
+
 ## Создание проекта Jenkins file
 - Перейди: Jenkins → New Item
 - Укажи название и выбери Pipeline
@@ -136,40 +155,44 @@ Pipeline script
 - Добавь скрипт:
 ```groovy
 pipeline {
-    agent any
-    
-    tools {
-        gradle 'Gradle 8.5'
+  agent any
+
+  tools {
+    gradle 'Gradle 8.5'
+  }
+
+  environment {
+    SELENIUM_GRID_URL = 'http://selenium-hub:4444/wd/hub'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: '12-jenkins', url: 'https://github.com/topsycreed/new-java-framework.git'
+      }
     }
 
-    environment {
-        SELENIUM_GRID_URL = 'http://selenium-hub:4444/wd/hub'
+    stage('Build & Test') {
+      environment {
+        LOGIN = credentials('login')
+        PASSWORD = credentials('password')
+      }
+      steps {
+        sh 'gradle clean test -Denv=$env -Dlogin=$LOGIN -Dpassword=$PASSWORD -Dselenium.remote.url=$SELENIUM_GRID_URL'
+      }
     }
+  }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: '12-jenkins', url: 'https://github.com/topsycreed/new-java-framework.git'
-            }
-        }
-
-        stage('Build & Test') {
-            steps {
-                sh 'gradle clean test -Denv=$env -Dlogin=$login -Dpassword=$password -Dselenium.remote.url=$SELENIUM_GRID_URL'
-            }
-        }
+  post {
+    always {
+      junit '**/build/test-results/test/TEST-*.xml'
+      allure([
+              includeProperties: false,
+              jdk              : '',
+              results          : [[path: 'build/allure-results']]
+      ])
     }
-
-    post {
-        always {
-            junit '**/build/test-results/test/TEST-*.xml'
-            allure([
-                    includeProperties: false,
-                    jdk              : '',
-                    results          : [[path: 'build/allure-results']]
-            ])
-        }
-    }
+  }
 }
 ```
 
@@ -180,7 +203,8 @@ pipeline {
 
 🛠 tools — подключает заранее настроенную версию Gradle из Jenkins (Manage Jenkins → Global Tool Configuration). Здесь используется Gradle 8.5.
 
-🌍 environment — задаёт глобальную переменную окружения SELENIUM_GRID_URL, которую можно использовать в sh и передавать в тесты.
+🌍 environment — задаёт глобальную переменную окружения SELENIUM_GRID_URL, которую можно использовать в sh и передавать в тесты. 
+Также там можно читать секретные переменные с помощью credentials('variable').
 
 📥 Checkout stage — клонирует проект из указанного Git-репозитория и ветки (12-jenkins).
 
