@@ -1,5 +1,6 @@
 package tests;
 
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,11 +53,7 @@ public class BaseTest {
                 throw new RuntimeException("Malformed URL for Selenium Remote WebDriver", e);
             }
         } else {
-            //fix for Jenkins
-            String profileDir = "/tmp/chrome-profile-" + UUID.randomUUID();
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--user-data-dir=" + profileDir);
-            driver = new ChromeDriver(options);
+            driver = new ChromeDriver();
         }
         driver.manage().window().maximize();
         return driver;
