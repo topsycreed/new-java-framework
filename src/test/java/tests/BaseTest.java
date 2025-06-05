@@ -1,5 +1,9 @@
 package tests;
 
+import config.TestPropertiesConfig;
+import io.qameta.allure.Allure;
+import org.aeonbits.owner.ConfigFactory;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +18,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Map;
+import java.util.UUID;
 
 @ExtendWith(AfterTestExtension.class)
 public class BaseTest {
+    TestPropertiesConfig configProperties = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
     static WebDriver driver;
     WebDriverWait longWait;
 
@@ -38,7 +44,11 @@ public class BaseTest {
 
     private WebDriver initDriver() {
         String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
+        if (remoteUrl == null || remoteUrl.isEmpty()) {
+            remoteUrl = configProperties.getSeleniumRemoteUrl();
+        }
         if (remoteUrl != null) {
+            Allure.addAttachment("RemoteUrl", remoteUrl);
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");  // Add headless mode
             options.addArguments("--disable-gpu"); // Switch off GPU, because we don't need it in headless mode
@@ -51,6 +61,7 @@ public class BaseTest {
                 throw new RuntimeException("Malformed URL for Selenium Remote WebDriver", e);
             }
         } else {
+            Allure.addAttachment("Local run", "No remote driver");
             driver = new ChromeDriver();
         }
         driver.manage().window().maximize();

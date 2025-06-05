@@ -21,6 +21,7 @@ class UiTests extends BaseTest {
         driver.findElement(By.linkText("Web form")).click();
         driver.findElement(By.id("my-text-id")).sendKeys("Text");
         driver.findElement(By.xpath("//button[@type = 'submit']")).click();
+        longWait.until(ExpectedConditions.urlContains("submitted-form.html"));
         WebElement title = driver.findElement(By.className("display-6"));
 
         Assertions.assertEquals("Form submitted", title.getText());
