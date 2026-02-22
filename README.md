@@ -1,8 +1,18 @@
-# new-java-framework
+# Template Automation Framework (Java, JUnit 5, REST Assured, Selenium, GitHub Actions, Jenkins)
 
 Java workshop project for building an automation framework from scratch for API and UI testing, then running tests in CI.
 
-This repository is a reference implementation for the workshop path and evolves step by step through dedicated branches.
+This repository is a reference implementation for Bas Dijkstra automation project guideline: https://github.com/basdijkstra/a-test-automation-project
+
+## Related workshop material
+
+<a href="src/test/resources/images/Building a Test Automation Framework in Java from Scratch.png">
+<img src="src/test/resources/images/Building a Test Automation Framework in Java from Scratch.png" alt="Masterclass preview" width="480" />
+</a>
+
+- 3 hours YouTube Masterclass: Building a Test Automation Framework in Java from Scratch: [English](https://www.youtube.com/watch?v=Uqbt9oY8ZX0) and [Russian](https://www.youtube.com/watch?v=5kPvJUzLr98)
+- [Step-by-step Google Doc tutorial (English)](https://docs.google.com/document/d/1jtK563Ryqwd0i2qgYtvYr-1HGEp_kddLY69qB6_62Q4/edit?usp=sharing)
+- [Step-by-step Google Doc tutorial (Russian)](https://docs.google.com/document/d/1ydqx5GVVoHwgLTm3MmRp5cqWjdc7xfzUJ1riePKHt_4/edit?usp=sharing) + [LinkedIn article (Russian)](https://www.linkedin.com/pulse/%25D0%25B0%25D0%25B2%25D1%2582%25D0%25BE%25D0%25BC%25D0%25B0%25D1%2582%25D0%25B8%25D0%25B7%25D0%25B0%25D1%2586%25D0%25B8%25D1%258F-uiapi-%25D1%2581-%25D0%25BD%25D1%2583%25D0%25BB%25D1%258F-%25D0%25B4%25D0%25BE-%25D0%25B3%25D0%25BE%25D1%2582%25D0%25BE%25D0%25B2%25D0%25BE%25D0%25B3%25D0%25BE-%25D1%2584%25D1%2580%25D0%25B5%25D0%25B9%25D0%25BC%25D0%25B2%25D0%25BE%25D1%2580%25D0%25BA%25D0%25B0-%25D0%25B2-cicd-chursov-zzuxc/?trackingId=IHUpECLmQ%2BiR%2B9BXTbf37g%3D%3D)
 
 ## Tech stack
 
@@ -78,7 +88,7 @@ Run UI tests only:
 
 ## Configuration
 
-Configuration is loaded through Owner from:
+Configuration is loaded through Owner library from:
 
 1. `classpath:${env}.properties`
 2. `classpath:default.properties` (fallback)
@@ -164,10 +174,5 @@ The framework was developed incrementally. Each major stage is mapped to a branc
 | 15 | CI/CD in GitHub Actions | [`11-github-actions`](https://github.com/topsycreed/new-java-framework/tree/11-github-actions) |
 | 16 | CI/CD in Jenkins and Selenium Grid | [`12-jenkins`](https://github.com/topsycreed/new-java-framework/tree/12-jenkins) |
 
-## Related workshop material
-
-- Main workshop challenge: https://github.com/basdijkstra/a-test-automation-project
-- This repository is the Java reference implementation used to demonstrate the same progression in Java.
-- YouTube Masterclass (3 hours): [Masterclass: Building a Test Automation Framework in Java from Scratch](https://www.youtube.com/watch?v=Uqbt9oY8ZX0)
-- Step-by-step tutorials (English): https://docs.google.com/document/d/1jtK563Ryqwd0i2qgYtvYr-1HGEp_kddLY69qB6_62Q4/edit?usp=sharing
-- Step-by-step tutorials (Russian): https://docs.google.com/document/d/1ydqx5GVVoHwgLTm3MmRp5cqWjdc7xfzUJ1riePKHt_4/edit?usp=sharing
+## Have any questions?
+Write me here: [topsycreed@gmail.com](mailto:topsycreed@gmail.com) or [LinkedIn](https://www.linkedin.com/in/chursovg/)
