@@ -1,238 +1,173 @@
-# 🔧 UI & API Test Automation with Jenkins + Selenium Grid (Java)
+# new-java-framework
 
-Этот проект позволяет запускать UI и API тесты на Java через Jenkins и Selenium Grid, развёрнутые локально с помощью Docker Compose.
+Java workshop project for building an automation framework from scratch for API and UI testing, then running tests in CI.
 
----
-## 📦 Состав
-- `Jenkins` (8080)
-- `Selenium Grid Hub` (4444)
-- `Chrome Node`
-- Docker-сеть для взаимодействия
----
+This repository is a reference implementation for the workshop path and evolves step by step through dedicated branches.
 
-## 🚀 Запуск окружения
-> Убедись, что установлен Docker и Docker Compose.
+## Tech stack
+
+- Java 17
+- Gradle (wrapper included)
+- JUnit 5
+- Rest Assured
+- Selenium WebDriver
+- AssertJ
+- Owner (property-based config)
+- Allure (results + reports)
+- GitHub Actions and Jenkins
+
+## Project structure
+
+```text
+src/test/java
+  config/        # Owner configuration interface
+  constants/     # Shared constants
+  controllers/   # API client/controller layer
+  models/        # API models
+  pages/         # Page Object Model classes
+  testdata/      # Reusable test data
+  tests/         # API and UI tests
+  utils/         # JUnit extension + Allure attachments
+
+src/test/resources
+  default.properties
+  dev.properties
+  test.properties
+```
+
+## Prerequisites
+
+- JDK 17+
+- Git
+- Google Chrome and matching ChromeDriver in PATH (for local UI runs)
+- Docker Desktop (or Docker Engine + Compose) for remote UI runs and Jenkins walkthrough
+
+## Quick start
+
+```bash
+git clone https://github.com/topsycreed/new-java-framework.git
+cd new-java-framework
+./gradlew clean test
+```
+
+On Windows PowerShell:
+
+```powershell
+.\gradlew.bat clean test
+```
+
+## Running tests
+
+Run all tests:
+
+```bash
+./gradlew clean test
+```
+
+Run API tests only:
+
+```bash
+./gradlew clean test --tests "tests.ApiTests"
+```
+
+Run UI tests only:
+
+```bash
+./gradlew clean test --tests "tests.UiTests" --tests "tests.UiPomTests"
+```
+
+## Configuration
+
+Configuration is loaded through Owner from:
+
+1. `classpath:${env}.properties`
+2. `classpath:default.properties` (fallback)
+
+Available keys (see `src/test/resources/*.properties`):
+
+- `apiBaseUrl`
+- `uiBaseUrl`
+- `login`
+- `password`
+- `selenium.remote.url`
+
+Runtime options:
+
+- `-Denv=dev` or `-Denv=test` to choose environment file
+- `-Dlogin=... -Dpassword=...` to override credentials from CI
+- `-Dselenium.remote.url=http://selenium-hub:4444/wd/hub` to force remote WebDriver
+
+The framework also supports `SELENIUM_REMOTE_URL` environment variable. If set, it is used before property-based Selenium URL lookup.
+
+Example:
+
+```bash
+./gradlew clean test -Denv=dev -Dlogin=myLogin -Dpassword=myPassword -Dselenium.remote.url=http://localhost:4444/wd/hub
+```
+
+## Docker-based local infrastructure
+
+`docker-compose.yml` starts:
+
+- Jenkins at `http://localhost:8080`
+- Selenium Grid Hub at `http://localhost:4444`
+- Selenium Chrome node
+
+Commands:
+
 ```bash
 docker-compose up -d
-```
-```bash
 docker-compose down
 ```
-Подожди 15–30 секунд.
 
-Теперь доступны:
-* Jenkins: http://localhost:8080
-* Selenium Grid UI: http://localhost:4444/ui/
+## CI/CD setup
 
-## Альтернативный способ запуска Jenkins через Dockerfile
-Если ты хочешь собрать кастомный образ Jenkins с установленным Chrome и Docker CLI (например, для запуска UI тестов и управления контейнерами прямо из Jenkins), можно использовать следующий Dockerfile.
+### GitHub Actions
 
-```dockerfile
-FROM jenkins/jenkins:lts-jdk17
+Workflow file: `.github/workflows/gradle.yml`
 
-USER root
+- Trigger: manual (`workflow_dispatch`)
+- Uses JDK 17
+- Starts a Selenium service container for UI tests
+- Runs `./gradlew clean test`
+- Builds and publishes Allure history to `gh-pages`
 
-# Обновление пакетов и установка lsb-release, зависимостей Chrome и утилит
-RUN apt-get update && \
-    apt-get install -y \
-    lsb-release \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    && rm -rf /var/lib/apt/lists/*
+### Jenkins
 
-# Установка Google Chrome
-RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get update && \
-    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb
+Pipeline file: `Jenkinsfile`
 
-# Проверка версии Chrome
-RUN google-chrome --version
+- Uses Gradle 8.5 tool in Jenkins
+- Runs tests with environment/system properties
+- Publishes JUnit XML results
+- Publishes Allure results from `build/allure-results`
 
-# Добавление репозитория Docker и установка docker-ce-cli
-RUN install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
-    > /etc/apt/sources.list.d/docker.list && \
-    apt-get update && \
-    apt-get install -y docker-ce-cli && \
-    rm -rf /var/lib/apt/lists/*
+## Workshop progression and branch map
 
-# Переключение на пользователя Jenkins
-USER jenkins
+The framework was developed incrementally. Each major stage is mapped to a branch.
 
-# Установка плагина Allure для Jenkins
-RUN jenkins-plugin-cli --plugins allure-jenkins-plugin
-```
+| Step | Topic | Branch |
+| --- | --- | --- |
+| 1 | Choosing tech stack and environment setup | `master` (initial setup) |
+| 2 | Creating a new project | `master` (initial setup) |
+| 3 | Creating a GitHub repository | `master` (initial setup) |
+| 4 | GitFlow and `.gitignore` | [`1-gitignore`](https://github.com/topsycreed/new-java-framework/tree/1-gitignore) |
+| 5 | Adding Gradle dependencies | [`2-api`](https://github.com/topsycreed/new-java-framework/tree/2-api) |
+| 6 | First API test (Rest Assured) | [`2-api`](https://github.com/topsycreed/new-java-framework/tree/2-api) |
+| 7 | API refactoring (controller/model approach) | [`3-controller`](https://github.com/topsycreed/new-java-framework/tree/3-controller) |
+| 8 | Constants and test data | [`4-constants`](https://github.com/topsycreed/new-java-framework/tree/4-constants) |
+| 9 | Parameterized tests | [`5-parametrized`](https://github.com/topsycreed/new-java-framework/tree/5-parametrized) |
+| 10 | First UI tests | [`6-ui`](https://github.com/topsycreed/new-java-framework/tree/6-ui) |
+| 11 | Wait strategies | [`7-waits`](https://github.com/topsycreed/new-java-framework/tree/7-waits) |
+| 12 | Page Object Model | [`8-pom`](https://github.com/topsycreed/new-java-framework/tree/8-pom) |
+| 13 | Property files and CLI config | [`9-properties`](https://github.com/topsycreed/new-java-framework/tree/9-properties) |
+| 14 | Allure reporting | [`10-allure`](https://github.com/topsycreed/new-java-framework/tree/10-allure) |
+| 15 | CI/CD in GitHub Actions | [`11-github-actions`](https://github.com/topsycreed/new-java-framework/tree/11-github-actions) |
+| 16 | CI/CD in Jenkins and Selenium Grid | [`12-jenkins`](https://github.com/topsycreed/new-java-framework/tree/12-jenkins) |
 
-### 🚀 Как собрать и запустить Jenkins с Dockerfile?
-* Перейди в директорию, где находится Dockerfile:
-```bash
-cd ./jenkins-docker
-```
-* Собери образ:
-```bash
-docker build -t jenkins:1 .
-```
-* Запусти Jenkins-контейнер:
-```bash
-docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home --name jenkins jenkins:1
-```
-Либо через графический интерфейс Docker Desktop.
+## Related workshop material
 
-
-### 🔐 Как получить пароль для Jenkins:
-```bash
-docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
-```
-
-## Настройка Jenkins
-
-1. Установить Allure plugin: http://localhost:8080/manage/pluginManager/available Allure Jenkins Plugin
-2. Добавить Gradle/Maven/Allure настройки http://localhost:8080/manage/configureTools/
-![img.png](src/test/resources/images/jenkins_gradle.png)
-![img.png](src/test/resources/images/jenkins_allure.png)
-
-## Создание проекта со свободной конфигурацией
-New Item → Freestyle project (Создать задачу со свободной конфигурацией)
-
-Source Code Management → Git
-- URL: https://github.com/topsycreed/new-java-framework.git
-- Branch: */12-jenkins
-
-Build → Invoke Gradle script
-- Gradle Version: Gradle 8.5
-- Tasks: clean test -Dselenium.remote.url=http://selenium-hub:4444/wd/hub
-
-Post-build Actions
-- Allure Report: путь к результатам build/allure-results
-- Publish JUnit test result report: XML файлы с отчетами о тестировании **/build/test-results/test/TEST-*.xml
-
-### 🧹 Дополнительно
-🗑 Автоудаление старых сборок
-
-В настройках проекта:
-
-Включи опцию Discard old builds (Удалять устаревшие сборки)
-
-Например: хранить 10 сборок или 30 дней
-
-⚙️ Параметризованная сборка
-
-Отметь This project is parameterized (Это - параметризованная сборка)
-
-Добавь параметр и его значение
-
-Используй заданный параметр в тестах, например: -Denv=$env
-
-🔐 Секретные переменные
-
-* В настройках проекта → включи:
-
-☑ Use secret text(s) or file(s)
-
-* Добавь Binding:
-
-Secret text:
-
-Variable: SECRET_VARIABLE
-
-Credentials ID: secret-variable
-
-* Используй в Gradle-таске
-```bash
-clean test -Dvar=$SECRET_VARIABLE
-```
-
-## Создание проекта Jenkins file
-- Перейди: Jenkins → New Item
-- Укажи название и выбери Pipeline
-- В настройках укажи:
-  
-Pipeline script
-- Добавь скрипт:
-```groovy
-pipeline {
-  agent any
-
-  tools {
-    gradle 'Gradle 8.5'
-  }
-
-  environment {
-    SELENIUM_GRID_URL = 'http://selenium-hub:4444/wd/hub'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git branch: '12-jenkins', url: 'https://github.com/topsycreed/new-java-framework.git'
-      }
-    }
-
-    stage('Build & Test') {
-      environment {
-        LOGIN = credentials('login')
-        PASSWORD = credentials('password')
-      }
-      steps {
-        sh 'gradle clean test -Denv=$env -Dlogin=$LOGIN -Dpassword=$PASSWORD -Dselenium.remote.url=$SELENIUM_GRID_URL'
-      }
-    }
-  }
-
-  post {
-    always {
-      junit '**/build/test-results/test/TEST-*.xml'
-      allure([
-              includeProperties: false,
-              jdk              : '',
-              results          : [[path: 'build/allure-results']]
-      ])
-    }
-  }
-}
-```
-
-### Пояснения к Jenkins file:
-🔧 pipeline — объявляет, что это декларативный пайплайн Jenkins.
-
-🖥️ agent any — позволяет запускать сборку на любом доступном Jenkins-агенте (включая локальный master-агент).
-
-🛠 tools — подключает заранее настроенную версию Gradle из Jenkins (Manage Jenkins → Global Tool Configuration). Здесь используется Gradle 8.5.
-
-🌍 environment — задаёт глобальную переменную окружения SELENIUM_GRID_URL, которую можно использовать в sh и передавать в тесты. 
-Также там можно читать секретные переменные с помощью credentials('variable').
-
-📥 Checkout stage — клонирует проект из указанного Git-репозитория и ветки (12-jenkins).
-
-⚙️ Build & Test stage:
-
-Выполняет 
-```bash
-gradle clean test
-```
-
-Передаёт параметры:
-- env, login, password — значения должны быть заданы как параметры сборки или секреты через credentials()
-- selenium.remote.url — URL до Selenium Grid
-📌 Эти значения будут доступны в коде через System.getProperty("env"), System.getProperty("login") и т.д.
-
-📦 post → always — блок, который выполнится всегда, даже если билд упал.
-
-📊 junit '/build/test-results/test/TEST-*.xml'** — публикует JUnit-отчёты из Gradle-выходной директории.
-
-📈 allure(...) — публикует Allure-отчёт из указанной папки (build/allure-results).
-
-## Полезные ссылки
-* https://www.docker.com/products/docker-desktop/
-* https://www.geeksforgeeks.org/what-is-dockerfile/
-* [habr: Изучаем Docker, часть 3: файлы Dockerfile](https://habr.com/ru/companies/ruvds/articles/439980/)
-
-Установка Jenkins:
-- Docker - https://www.jenkins.io/doc/book/installing/docker/
-- Linux - https://www.jenkins.io/doc/book/installing/linux/
-- MacOS - https://www.jenkins.io/doc/book/installing/macos/
-- Windows - https://www.jenkins.io/doc/book/installing/windows/
+- Main workshop challenge: https://github.com/basdijkstra/a-test-automation-project
+- This repository is the Java reference implementation used to demonstrate the same progression in Java.
+- YouTube Masterclass (3 hours): [Masterclass: Building a Test Automation Framework in Java from Scratch](https://www.youtube.com/watch?v=Uqbt9oY8ZX0)
+- Step-by-step tutorials (English): https://docs.google.com/document/d/1jtK563Ryqwd0i2qgYtvYr-1HGEp_kddLY69qB6_62Q4/edit?usp=sharing
+- Step-by-step tutorials (Russian): https://docs.google.com/document/d/1ydqx5GVVoHwgLTm3MmRp5cqWjdc7xfzUJ1riePKHt_4/edit?usp=sharing
